@@ -7,7 +7,7 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://wingsdatingapp_render_example_user:yEC6SChXpN7K1UT70Run3EWgGQcAA6PU@dpg-cuq6qii3esus738kvhb0-a.frankfurt-postgres.render.com/wingsdatingapp_render_example"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://wingsdatingapp2_render_example_user:uwDr0MIWQsfKP6VMcMQod6Zw74qnhL1g@dpg-cuqv1stumphs73f10vag-a.frankfurt-postgres.render.com/wingsdatingapp2_render_example"
 socketio = SocketIO(app)
 db = SQLAlchemy(app)
 
@@ -66,14 +66,7 @@ class RelationshipData(db.Model):
     email = db.Column(db.String(200))
     lookingfor = db.Column(db.String(255))
     openfor = db.Column(db.String(255))
-    languages = db.Column(db.ARRAY(db.String))
     hobbies = db.Column(db.ARRAY(db.String))
-    loveLanguage = db.Column(db.String(255))
-    personality = db.Column(db.String(255))
-    lifestyle = db.Column(db.String(255))
-    family = db.Column(db.String(255))
-    diet = db.Column(db.String(255))
-    drinking = db.Column(db.String(255))
 
     user = db.relationship('Task', backref=db.backref('get_relationship_data', lazy=True))    
 
@@ -201,14 +194,7 @@ def postRelationshipsData():
         new_email = data['email']
         lookingfor = data['lookingfor']
         openfor = data['openfor']
-        languages = data['languages']
         hobbies = data['hobbies']
-        loveLanguage = data['loveLanguage']
-        personality = data['personality']
-        lifestyle = data['lifestyle']
-        family = data['family']
-        diet = data['diet']
-        drinking = data['drinking']
 
         # Validate input
         if not new_email or not lookingfor or not openfor:
@@ -223,14 +209,7 @@ def postRelationshipsData():
         user_auth_id = user.id
         lookingfor = data['lookingfor']
         openfor = data['openfor']
-        languages = data['languages']
         hobbies = data['hobbies']
-        loveLanguage = data['loveLanguage']
-        personality = data['personality']
-        lifestyle = data['lifestyle']
-        family = data['family']
-        diet = data['diet']
-        drinking = data['drinking']
 
         # Check if the user already has preferences
         userrelationshipsDetails = RelationshipData.query.filter_by(user_auth_id=user_auth_id).first()
@@ -239,15 +218,8 @@ def postRelationshipsData():
             # Update existing preference
             userrelationshipsDetails.lookingfor = lookingfor
             userrelationshipsDetails.openfor = openfor,
-            userrelationshipsDetails.languages = languages,
             userrelationshipsDetails.hobbies = hobbies,
-            userrelationshipsDetails.email = new_email,
-            userrelationshipsDetails.loveLanguage = loveLanguage,
-            userrelationshipsDetails.personality = personality,
-            userrelationshipsDetails.lifestyle = lifestyle,
-            userrelationshipsDetails.family = family,
-            userrelationshipsDetails.diet = diet,
-            userrelationshipsDetails.drinking = drinking,            
+            userrelationshipsDetails.email = new_email,          
 
             message = "Updated user relationshipData"
         else:
@@ -257,14 +229,7 @@ def postRelationshipsData():
                 email=new_email,
                 lookingfor=lookingfor,
                 openfor=openfor,
-                languages=languages,
                 hobbies=hobbies,
-                loveLanguage=loveLanguage,
-                personality=personality,
-                lifestyle=lifestyle,
-                family=family,
-                diet=diet,
-                drinking=drinking
             )
             db.session.add(userrelationshipsDetails)
             message = "Added new user relationshipData"
@@ -404,14 +369,7 @@ def get_relationship_data():
             'email': rel.email,
             'lookingfor': rel.lookingfor,
             'openfor': rel.openfor,
-            'languages': rel.languages,
             'hobbies': rel.hobbies,
-            'loveLanguage': rel.loveLanguage,
-            'personality': rel.personality,
-            'lifestyle': rel.lifestyle,
-            'family': rel.family,
-            'diet': rel.diet,
-            'drinking': rel.drinking,
         }
         for rel in relationships
     ]
