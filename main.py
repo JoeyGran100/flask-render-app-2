@@ -7,7 +7,7 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://wingsdatingapp2_render_example_user:uwDr0MIWQsfKP6VMcMQod6Zw74qnhL1g@dpg-cuqv1stumphs73f10vag-a.frankfurt-postgres.render.com/wingsdatingapp2_render_example"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://wingsdatingapp3_render_example_user:VqwuNCaVG8e3Rv9Dl6f3fUvD3eHjn5az@dpg-curgvqi3esus73doao00-a.frankfurt-postgres.render.com/wingsdatingapp3_render_example"
 socketio = SocketIO(app)
 db = SQLAlchemy(app)
 
@@ -67,6 +67,7 @@ class RelationshipData(db.Model):
     lookingfor = db.Column(db.String(255))
     openfor = db.Column(db.String(255))
     hobbies = db.Column(db.ARRAY(db.String))
+    preference = db.Column(db.ARRAY(db.String))
 
     user = db.relationship('Task', backref=db.backref('get_relationship_data', lazy=True))    
 
@@ -195,6 +196,7 @@ def postRelationshipsData():
         lookingfor = data['lookingfor']
         openfor = data['openfor']
         hobbies = data['hobbies']
+        preference = data['preference']
 
         # Validate input
         if not new_email or not lookingfor or not openfor:
@@ -210,6 +212,7 @@ def postRelationshipsData():
         lookingfor = data['lookingfor']
         openfor = data['openfor']
         hobbies = data['hobbies']
+        preference = data['preference']
 
         # Check if the user already has preferences
         userrelationshipsDetails = RelationshipData.query.filter_by(user_auth_id=user_auth_id).first()
@@ -219,6 +222,7 @@ def postRelationshipsData():
             userrelationshipsDetails.lookingfor = lookingfor
             userrelationshipsDetails.openfor = openfor,
             userrelationshipsDetails.hobbies = hobbies,
+            userrelationshipsDetails.preference = preference,            
             userrelationshipsDetails.email = new_email,          
 
             message = "Updated user relationshipData"
@@ -230,6 +234,7 @@ def postRelationshipsData():
                 lookingfor=lookingfor,
                 openfor=openfor,
                 hobbies=hobbies,
+                preference=preference
             )
             db.session.add(userrelationshipsDetails)
             message = "Added new user relationshipData"
@@ -370,6 +375,8 @@ def get_relationship_data():
             'lookingfor': rel.lookingfor,
             'openfor': rel.openfor,
             'hobbies': rel.hobbies,
+            'preference': rel.preference,
+            
         }
         for rel in relationships
     ]
